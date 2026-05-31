@@ -1,81 +1,33 @@
-# Customer Support Ticket CRM
+# Support Ticket CRM
 
-A COMPLETE, DEPLOYMENT-READY Customer Support CRM System built with FastAPI, SQLite, and TailwindCSS.
+Hey there! This is a simple, lightweight Customer Support CRM that I built to manage support tickets efficiently. The goal was to create something super fast, clean, and production-ready without overcomplicating things. 
+
+You can check out the live version here:
+👉 **[Live Demo on Railway](https://web-production-1f9742.up.railway.app/)**
+
+👉 **[GitHub Repository](https://github.com/atulpandey5678/crm_v2)**
+
+## What's under the hood?
+
+I kept the stack modern but straightforward so it runs fast and is easy to maintain:
+
+*   **Backend:** Python with **FastAPI**. It's incredibly fast and makes handling the API routing a breeze.
+*   **Database:** **SQLite** paired with **SQLAlchemy** (and Alembic for migrations). It stores all the tickets and notes without the need for a heavy database server.
+*   **Frontend:** Standard HTML stitched together with **Jinja2** templates. 
+*   **Styling:** **Tailwind CSS**. I used this to create a clean, premium custom theme (Navy, Slate Grey, Beige, and Olive).
+*   **Interactivity:** A tiny bit of **Alpine.js** and Vanilla JS for handling things like dark mode toggling and async form submissions.
 
 ## Features
+*   Create new customer support tickets
+*   Dashboard to view and filter tickets by status or search terms
+*   Add internal notes to a timeline for each ticket
+*   Update ticket statuses (Open, In Progress, Closed)
+*   Fully responsive UI with a built-in Dark Mode!
 
-- Create customer support tickets
-- View all tickets in a clean dashboard
-- Search and filter tickets
-- View ticket details
-- Update ticket status and add internal notes
-- Dark mode toggle
-- Responsive, modern SaaS-style UI
-
-## Tech Stack
-
-- **Backend:** Python 3.12, FastAPI, SQLAlchemy, Alembic, Pydantic
-- **Frontend:** Jinja2 Templates, TailwindCSS (CDN), AlpineJS, Toastify
-- **Database:** SQLite (local), adaptable via `DATABASE_URL`
-- **Testing:** Pytest
-
-## Setup & Installation
-
-1. **Clone and enter the directory:**
-   ```bash
-   git clone <repo-url>
-   cd crm_project
-   ```
-
-2. **Create a virtual environment and install dependencies:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   pip install -r requirements.txt
-   ```
-
-3. **Set up Environment Variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   (Optionally edit `.env` for your local settings)
-
-4. **Run Database Migrations:**
-   ```bash
-   alembic upgrade head
-   ```
-
-## Running Locally
-
-Start the development server using Uvicorn:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Visit `http://localhost:8000` in your browser.
-API documentation is available at `http://localhost:8000/docs`.
-
-## Testing
-
-Run the automated tests using Pytest:
-
-```bash
-pytest
-```
-
-## Deployment (Railway)
-
-This project is fully configured for deployment on Railway.
-
-1. Connect your GitHub repository to Railway.
-2. Railway will automatically use the `railway.json` and `Procfile`.
-3. Add a `DATABASE_URL` environment variable if you plan to use a Postgres plugin on Railway, otherwise it defaults to SQLite (ephemeral on Railway).
-4. Deploy!
-
-### Production Checklist
-
-- [x] Environment variables configured
-- [x] Database migrations run automatically via startup command
-- [x] Secure API endpoints
-- [x] Responsive UI
+## Running it locally
+If you want to spin this up yourself:
+1. Clone this repository.
+2. Install the requirements: `pip install -r requirements.txt`
+3. Run the database migrations: `alembic upgrade head`
+4. Start the server: `uvicorn app.main:app --reload`
+5. Visit `http://127.0.0.1:8000` in your browser.
