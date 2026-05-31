@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Create Ticket - Customer Support CRM{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-0">
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-3xl font-bold leading-7 text-navy dark:text-white sm:truncate tracking-tight">
+                Create New Ticket
+            </h2>
+            <p class="mt-2 text-sm text-slate dark:text-gray-400">Fill in the details below to open a new support request.</p>
+        </div>
+        <div class="mt-4 flex md:mt-0 md:ml-4">
+            <a href="/" class="inline-flex items-center px-5 py-2 border border-gray-200 rounded-full shadow-sm text-sm font-semibold text-slateDark bg-white hover:bg-beige dark:bg-slate-800 dark:text-gray-200 dark:border-slate-700 dark:hover:bg-slate-700 transition-all">
+                Cancel
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-beigeCard shadow-sm border border-gray-100 sm:rounded-2xl dark:bg-slate-800 dark:border-slate-700">
+        <div class="px-4 py-8 sm:p-10">
+            <form id="createTicketForm" class="space-y-8">
+                <div class="grid grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2">
+                    <div>
+                        <label for="customer_name" class="block text-sm font-semibold text-slateDark dark:text-gray-200">Customer Name <span class="text-navy">*</span></label>
+                        <div class="mt-2">
+                            <input type="text" name="customer_name" id="customer_name" required class="shadow-sm focus:ring-navy focus:border-navy block w-full sm:text-sm border-gray-200 rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white px-4 py-3 border transition-colors bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="customer_email" class="block text-sm font-semibold text-slateDark dark:text-gray-200">Customer Email <span class="text-navy">*</span></label>
+                        <div class="mt-2">
+                            <input type="email" name="customer_email" id="customer_email" required class="shadow-sm focus:ring-navy focus:border-navy block w-full sm:text-sm border-gray-200 rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white px-4 py-3 border transition-colors bg-white">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="subject" class="block text-sm font-semibold text-slateDark dark:text-gray-200">Subject <span class="text-navy">*</span></label>
+                    <div class="mt-2">
+                        <input type="text" name="subject" id="subject" required minlength="2" class="shadow-sm focus:ring-navy focus:border-navy block w-full sm:text-sm border-gray-200 rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white px-4 py-3 border transition-colors bg-white">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="description" class="block text-sm font-semibold text-slateDark dark:text-gray-200">Description <span class="text-navy">*</span></label>
+                    <div class="mt-2">
+                        <textarea id="description" name="description" rows="5" required minlength="10" class="shadow-sm focus:ring-navy focus:border-navy block w-full sm:text-sm border-gray-200 rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white px-4 py-3 border transition-colors bg-white"></textarea>
+                    </div>
+                    <p class="mt-2 text-sm text-slate dark:text-gray-400">Please provide as much detail as possible about the issue.</p>
+                </div>
+
+                <div class="flex justify-end pt-4">
+                    <button type="submit" id="submitBtn" class="inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-bold rounded-full text-white bg-navy hover:bg-navyHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy disabled:opacity-50 transition-all">
+                        Create Ticket
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('createTicketForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Creating...';
+        
+        const data = {
+            customer_name: document.getElementById('customer_name').value,
+            customer_email: document.getElementById('customer_email').value,
+            subject: document.getElementById('subject').value,
+            description: document.getElementById('description').value
+        };
+        
+        try {
+            const response = await fetch('/api/tickets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showToast('Ticket created successfully!');
+                setTimeout(() => {
+                    window.location.href = `/tickets/${result.ticket_id}`;
+                }, 1000);
+            } else {
+                let errorMsg = 'Failed to create ticket';
+                if (result.detail && Array.isArray(result.detail)) {
+                    errorMsg = result.detail.map(err => `${err.loc[err.loc.length-1]}: ${err.msg}`).join(', ');
+                }
+                showToast(errorMsg, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Create Ticket';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An unexpected error occurred.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Create Ticket';
+        }
+    });
+</script>
+{% endblock %}

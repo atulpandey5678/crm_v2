@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Customer Support CRM{% endblock %}</title>
+    <!-- Premium Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#1e3a8a',
+                        navyHover: '#1e40af',
+                        slate: '#475569',
+                        slateDark: '#334155',
+                        beige: '#f8f6f0',
+                        beigeCard: '#ffffff',
+                        olive: '#4d7c0f',
+                        oliveLight: '#ecfccb',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-beige text-slateDark font-sans min-h-screen dark:bg-slate-900 dark:text-gray-100 transition-colors duration-200" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val)); if (darkMode) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark')">
+    <nav class="bg-beigeCard shadow-sm dark:bg-slate-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-xl font-bold text-navy dark:text-blue-400 flex items-center gap-2 tracking-tight">
+                            <i class="fas fa-headset"></i> Support CRM
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
+                        <a href="/" class="border-transparent text-slate hover:border-navy hover:text-navy inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium dark:text-gray-300 dark:hover:text-white transition-colors">
+                            Dashboard
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button @click="darkMode = !darkMode; if (darkMode) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark')" class="p-2 rounded-full text-slate hover:text-navy hover:bg-beige focus:outline-none dark:hover:bg-slate-700 dark:hover:text-white transition-all">
+                        <i class="fas" :class="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+                    </button>
+                    <a href="/tickets/new" class="inline-flex items-center px-5 py-2 border border-transparent text-sm font-semibold rounded-full shadow-sm text-white bg-navy hover:bg-navyHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-all">
+                        <i class="fas fa-plus mr-2"></i> New Ticket
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+    </main>
+    <script>
+        function showToast(message, type = 'success') {
+            const bg = type === 'success' ? '#4d7c0f' : (type === 'error' ? '#b91c1c' : '#1e3a8a');
+            Toastify({
+                text: message,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: {
+                    background: bg,
+                    borderRadius: '8px',
+                    fontFamily: 'Outfit, sans-serif',
+                    fontWeight: '500'
+                }
+            }).showToast();
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

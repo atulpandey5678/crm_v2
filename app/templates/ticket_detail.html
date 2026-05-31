@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket {{ ticket.ticket_id }} - Customer Support CRM{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-0">
+    <div class="mb-6">
+        <a href="/" class="text-sm font-semibold text-slate hover:text-navy dark:text-gray-400 dark:hover:text-blue-400 transition-colors flex items-center inline-flex">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="bg-beigeCard shadow-sm border border-gray-100 overflow-hidden sm:rounded-2xl dark:bg-slate-800 dark:border-slate-700 mb-8">
+        <div class="px-6 py-6 sm:px-8 flex justify-between items-center flex-wrap gap-4 border-b border-gray-100 dark:border-slate-700">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-sm font-bold text-navy dark:text-blue-400">{{ ticket.ticket_id }}</span>
+                    <h3 class="text-2xl font-bold text-navy dark:text-white tracking-tight">
+                        {{ ticket.subject }}
+                    </h3>
+                </div>
+                <p class="text-sm text-slate dark:text-gray-400 font-medium">
+                    Created on {{ ticket.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                </p>
+            </div>
+            <div>
+                <span id="statusBadge" class="px-4 py-1.5 inline-flex text-sm leading-5 font-bold rounded-full shadow-sm
+                    {% if ticket.status == 'Open' %}bg-blue-100 text-navy dark:bg-blue-900/30 dark:text-blue-400
+                    {% elif ticket.status == 'In Progress' %}bg-gray-200 text-slateDark dark:bg-gray-700 dark:text-gray-300
+                    {% else %}bg-oliveLight text-olive dark:bg-green-900/30 dark:text-green-400{% endif %}">
+                    {{ ticket.status }}
+                </span>
+            </div>
+        </div>
+        <div class="px-6 py-6 sm:px-8">
+            <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-bold text-slate dark:text-gray-400 uppercase tracking-wider mb-1">Customer</dt>
+                    <dd class="text-base text-slateDark dark:text-white font-semibold">{{ ticket.customer_name }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-bold text-slate dark:text-gray-400 uppercase tracking-wider mb-1">Email address</dt>
+                    <dd class="text-base text-slateDark dark:text-white font-semibold">{{ ticket.customer_email }}</dd>
+                </div>
+                <div class="sm:col-span-2">
+                    <dt class="text-sm font-bold text-slate dark:text-gray-400 uppercase tracking-wider mb-2">Description</dt>
+                    <dd class="text-base text-slateDark dark:text-gray-200 whitespace-pre-wrap bg-beige dark:bg-slate-900 p-5 rounded-xl border border-gray-100 dark:border-slate-700 leading-relaxed">{{ ticket.description }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-1">
+            <div class="bg-beigeCard shadow-sm border border-gray-100 sm:rounded-2xl dark:bg-slate-800 dark:border-slate-700 sticky top-6">
+                <div class="px-6 py-6 sm:p-8">
+                    <h3 class="text-xl font-bold text-navy dark:text-white mb-6 tracking-tight">Update Ticket</h3>
+                    <form id="updateTicketForm" class="space-y-6">
+                        <div>
+                            <label for="status" class="block text-sm font-semibold text-slateDark dark:text-gray-200 mb-2">Status</label>
+                            <select id="status" name="status" class="block w-full pl-3 pr-10 py-3 text-base border-gray-200 focus:outline-none focus:ring-navy focus:border-navy sm:text-sm rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white transition-colors bg-white">
+                                <option value="Open" {% if ticket.status == 'Open' %}selected{% endif %}>Open</option>
+                                <option value="In Progress" {% if ticket.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                                <option value="Closed" {% if ticket.status == 'Closed' %}selected{% endif %}>Closed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="note" class="block text-sm font-semibold text-slateDark dark:text-gray-200 mb-2">Add Note <span class="text-slate font-normal">(Optional)</span></label>
+                            <textarea id="note" name="note" rows="4" class="shadow-sm focus:ring-navy focus:border-navy block w-full sm:text-sm border-gray-200 rounded-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white px-4 py-3 border transition-colors bg-white" placeholder="Type an internal note..."></textarea>
+                        </div>
+                        <button type="submit" id="updateBtn" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-bold text-white bg-navy hover:bg-navyHover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy transition-all">
+                            Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            <h3 class="text-xl font-bold text-navy dark:text-white mb-6 tracking-tight">Notes Timeline</h3>
+            <div class="bg-beigeCard shadow-sm border border-gray-100 sm:rounded-2xl dark:bg-slate-800 dark:border-slate-700 p-6 sm:p-8">
+                {% if ticket.notes %}
+                <div class="flow-root">
+                    <ul role="list" class="-mb-8">
+                        {% for note in ticket.notes %}
+                        <li>
+                            <div class="relative pb-8">
+                                {% if not loop.last %}
+                                <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200 dark:bg-slate-700" aria-hidden="true"></span>
+                                {% endif %}
+                                <div class="relative flex space-x-4">
+                                    <div>
+                                        <span class="h-10 w-10 rounded-full bg-beige dark:bg-slate-900 flex items-center justify-center ring-8 ring-white dark:ring-slate-800">
+                                            <i class="fas fa-comment text-slate dark:text-gray-500 text-sm"></i>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-slateDark dark:text-gray-200 whitespace-pre-wrap bg-beige dark:bg-slate-900 p-4 rounded-xl border border-gray-100 dark:border-slate-700 inline-block leading-relaxed">{{ note.note_text }}</p>
+                                        </div>
+                                        <div class="text-right text-xs whitespace-nowrap text-slate dark:text-gray-400 font-medium pt-2">
+                                            <time datetime="{{ note.created_at.isoformat() }}">{{ note.created_at.strftime('%b %d, %H:%M') }}</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                <div class="flex flex-col items-center justify-center py-10">
+                    <div class="h-12 w-12 rounded-full bg-beige dark:bg-slate-900 flex items-center justify-center mb-4">
+                        <i class="fas fa-comments text-xl text-slate"></i>
+                    </div>
+                    <p class="text-slate dark:text-gray-400 text-sm font-medium">No notes have been added yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('updateTicketForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const updateBtn = document.getElementById('updateBtn');
+        updateBtn.disabled = true;
+        updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+        
+        const status = document.getElementById('status').value;
+        const note = document.getElementById('note').value.trim();
+        
+        const data = { status };
+        if (note) {
+            data.note = note;
+        }
+        
+        try {
+            const response = await fetch('/api/tickets/{{ ticket.ticket_id }}', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                showToast('Ticket updated successfully!');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            } else {
+                const result = await response.json();
+                showToast(result.detail || 'Failed to update ticket', 'error');
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = 'Save Changes';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An unexpected error occurred.', 'error');
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = 'Save Changes';
+        }
+    });
+</script>
+{% endblock %}

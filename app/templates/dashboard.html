@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Customer Support CRM{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <div class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-navy dark:text-white tracking-tight">Overview</h1>
+            <p class="mt-1 text-sm text-slate dark:text-gray-400">Manage all customer interactions seamlessly.</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-4 mb-8">
+        <div class="bg-beigeCard overflow-hidden shadow-sm border border-gray-100 rounded-xl dark:bg-slate-800 dark:border-slate-700 transition-all hover:shadow-md">
+            <div class="px-5 py-6">
+                <dt class="text-sm font-semibold text-slate truncate dark:text-gray-400 uppercase tracking-wider">Total Tickets</dt>
+                <dd class="mt-2 text-4xl font-bold text-navy dark:text-white">{{ stats.total }}</dd>
+            </div>
+        </div>
+        <div class="bg-beigeCard overflow-hidden shadow-sm border border-gray-100 rounded-xl dark:bg-slate-800 dark:border-slate-700 border-b-4 border-b-navy transition-all hover:shadow-md">
+            <div class="px-5 py-6">
+                <dt class="text-sm font-semibold text-slate truncate dark:text-gray-400 uppercase tracking-wider">Open</dt>
+                <dd class="mt-2 text-4xl font-bold text-navy dark:text-blue-400">{{ stats.open }}</dd>
+            </div>
+        </div>
+        <div class="bg-beigeCard overflow-hidden shadow-sm border border-gray-100 rounded-xl dark:bg-slate-800 dark:border-slate-700 border-b-4 border-b-slate transition-all hover:shadow-md">
+            <div class="px-5 py-6">
+                <dt class="text-sm font-semibold text-slate truncate dark:text-gray-400 uppercase tracking-wider">In Progress</dt>
+                <dd class="mt-2 text-4xl font-bold text-slate dark:text-slate-300">{{ stats.in_progress }}</dd>
+            </div>
+        </div>
+        <div class="bg-beigeCard overflow-hidden shadow-sm border border-gray-100 rounded-xl dark:bg-slate-800 dark:border-slate-700 border-b-4 border-b-olive transition-all hover:shadow-md">
+            <div class="px-5 py-6">
+                <dt class="text-sm font-semibold text-slate truncate dark:text-gray-400 uppercase tracking-wider">Closed</dt>
+                <dd class="mt-2 text-4xl font-bold text-olive dark:text-green-400">{{ stats.closed }}</dd>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-beigeCard shadow-sm border border-gray-100 rounded-xl mb-8 p-5 dark:bg-slate-800 dark:border-slate-700">
+        <form action="/" method="GET" class="flex flex-col sm:flex-row gap-4">
+            <div class="flex-1">
+                <label for="search" class="sr-only">Search</label>
+                <div class="relative rounded-lg shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-slate"></i>
+                    </div>
+                    <input type="text" name="search" id="search" value="{{ search }}" class="focus:ring-navy focus:border-navy block w-full pl-10 sm:text-sm border-gray-200 rounded-lg py-2.5 dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors bg-white" placeholder="Search by ID, Name, Email, Subject...">
+                </div>
+            </div>
+            <div class="sm:w-48">
+                <select name="status" id="status" class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-200 focus:outline-none focus:ring-navy focus:border-navy sm:text-sm rounded-lg dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-colors bg-white" onchange="this.form.submit()">
+                    <option value="All" {% if status == 'All' %}selected{% endif %}>All Statuses</option>
+                    <option value="Open" {% if status == 'Open' %}selected{% endif %}>Open</option>
+                    <option value="In Progress" {% if status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Closed" {% if status == 'Closed' %}selected{% endif %}>Closed</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="w-full inline-flex justify-center py-2.5 px-5 border border-transparent shadow-sm text-sm font-semibold rounded-lg text-white bg-slateDark hover:bg-navy focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-navy dark:bg-slate-700 dark:hover:bg-slate-600 transition-colors">
+                    Filter
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="flex flex-col">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                <div class="shadow-sm overflow-hidden border border-gray-100 sm:rounded-xl dark:border-slate-700">
+                    <table class="min-w-full divide-y divide-gray-100 dark:divide-slate-700">
+                        <thead class="bg-gray-50 dark:bg-slate-800">
+                            <tr>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate uppercase tracking-wider dark:text-gray-400">Ticket ID</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate uppercase tracking-wider dark:text-gray-400">Customer</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate uppercase tracking-wider dark:text-gray-400">Subject</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate uppercase tracking-wider dark:text-gray-400">Status</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-slate uppercase tracking-wider dark:text-gray-400">Date</th>
+                                <th scope="col" class="relative px-6 py-4"><span class="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-beigeCard divide-y divide-gray-50 dark:bg-slate-900 dark:divide-slate-800">
+                            {% for ticket in tickets %}
+                            <tr class="hover:bg-beige transition-colors group dark:hover:bg-slate-800/80">
+                                <td class="px-6 py-5 whitespace-nowrap text-sm font-bold text-navy dark:text-blue-400">
+                                    <a href="/tickets/{{ ticket.ticket_id }}" class="hover:text-navyHover transition-colors">{{ ticket.ticket_id }}</a>
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    <div class="text-sm font-semibold text-slateDark dark:text-white">{{ ticket.customer_name }}</div>
+                                    <div class="text-xs text-slate dark:text-gray-400 mt-0.5">{{ ticket.customer_email }}</div>
+                                </td>
+                                <td class="px-6 py-5 text-sm text-slateDark dark:text-gray-300 max-w-xs truncate font-medium">{{ ticket.subject }}</td>
+                                <td class="px-6 py-5 whitespace-nowrap">
+                                    {% if ticket.status == 'Open' %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-blue-100 text-navy dark:bg-blue-900/30 dark:text-blue-400">Open</span>
+                                    {% elif ticket.status == 'In Progress' %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-200 text-slateDark dark:bg-gray-700 dark:text-gray-300">In Progress</span>
+                                    {% else %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-oliveLight text-olive dark:bg-green-900/30 dark:text-green-400">Closed</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-5 whitespace-nowrap text-sm text-slate dark:text-gray-400 font-medium">{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="/tickets/{{ ticket.ticket_id }}" class="text-slate group-hover:text-navy dark:text-gray-500 dark:group-hover:text-blue-400 transition-colors">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-16 whitespace-nowrap text-sm text-slate text-center dark:text-gray-400">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="h-12 w-12 rounded-full bg-beige flex items-center justify-center mb-4 dark:bg-slate-800">
+                                            <i class="fas fa-inbox text-xl text-slate"></i>
+                                        </div>
+                                        <p class="font-medium text-slateDark dark:text-white">No tickets found</p>
+                                        <p class="mt-1 text-slate">Get started by creating a new ticket.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
